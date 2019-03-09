@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import * as noScroll from 'no-scroll';
+import ArrowBack from '@material-ui/icons/ArrowBack';
 
 import { IImage } from 'api/response';
 
@@ -10,6 +11,7 @@ interface IProps {
   left: number;
   width: number;
   height: number;
+  isSelected?: Boolean;
 }
 
 const time = 0.25;
@@ -20,6 +22,7 @@ export default ({
   width,
   height,
   left,
+  isSelected,
 }: IProps) => {
   const [selected, setSelected] = React.useState<Boolean>(false);
   const [backgroundOpacitiy, setBackgroundOpacitiy] = React.useState<number>(0);
@@ -32,6 +35,7 @@ export default ({
   });
   const onClickImage = React.useCallback(() => {
     if (selected) return;
+    window.location.hash = image.id;
     window.clearTimeout(timeoutId);
     setSelected(true);
     setBackgroundVisible(true);
@@ -43,6 +47,7 @@ export default ({
   }, [selected, timeoutId]);
   const onClickBack = React.useCallback(() => {
     if (!selected) return;
+    window.location.hash = '';
     setSelected(false);
     setBackgroundOpacitiy(0);
     noScroll.off();
@@ -92,6 +97,15 @@ export default ({
     };
   }, []);
 
+  React.useEffect(() => {
+    if (selected && !isSelected) {
+      onClickBack();
+    } else if (!selected && isSelected) {
+      onClickImage();
+    }
+    setSelected(isSelected || false);
+  }, [isSelected]);
+
   const style: React.CSSProperties = getStyle();
 
   const backgroundStyle: React.CSSProperties = {
@@ -104,7 +118,8 @@ export default ({
       <Wrapper style={style} onClick={onClickImage}>
         <Img src={image.url} alt={image.title} />
       </Wrapper>
-      <PopupBackground onClick={onClickBack} style={backgroundStyle} />
+      <PopupBackground style={backgroundStyle} />
+      <BackIcon onClick={onClickBack} style={backgroundStyle} />
     </>
   );
 };
@@ -130,5 +145,16 @@ const PopupBackground = styled.div`
   left: 0;
   right: 0;
   z-index: 100;
-transition: opacity ${time}s ease;
+  transition: opacity ${time}s ease;
+`;
+
+const BackIcon = styled(ArrowBack)`
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2000;
+  color: #ffffff;
+  font-size: 4rem;
+  cursor: pointer;
+  transition: opacity ${time}s ease;
 `;
