@@ -11,6 +11,8 @@ interface IProps {
   height: number,
 }
 
+const time = 0.4;
+
 export default ({
   image,
   top,
@@ -18,26 +20,45 @@ export default ({
   height,
 }: IProps) => {
   const [selected, setSelected] = React.useState<Boolean>(false);
-  React.useEffect(() => {
-    if (selected) noScroll.on(); else noScroll.off();
-  }, [selected]);
+  const [backgroundOpacitiy, setBackgroundOpacitiy] = React.useState<number>(0);
+  const [backgroundVisible, setBackgroundVisible] = React.useState<boolean>(false);
+  const [imageZIndex, setImageZIndex] = React.useState<number>(0);
+  const [timeoutId, setTimeoutId] = React.useState<number>();
   const onClickImage = React.useCallback(() => {
     setSelected(true);
+    setBackgroundVisible(true);
+    setImageZIndex(1000);
+    window.requestAnimationFrame(() => {
+      setBackgroundOpacitiy(1);
+      noScroll.on();
+    });
+    window.clearTimeout(timeoutId);
   }, []);
   const onClickBack = React.useCallback(() => {
     setSelected(false);
+    setBackgroundOpacitiy(0);
+    noScroll.off();
+    setTimeoutId(window.setTimeout(() => {
+      setBackgroundVisible(false);
+      setImageZIndex(0);
+    }, time * 1000));
   }, []);
   const style: React.CSSProperties = selected ? {
-    zIndex: 1000,
+    zIndex: imageZIndex,
     top: window.pageYOffset + (window.innerHeight - height) / 2,
     left: 0,
     width,
     height,
   } : {
+    zIndex: imageZIndex,
     top,
     left: 0,
     width,
     height,
+  };
+  const backgroundStyle: React.CSSProperties = {
+    display: backgroundVisible ? 'block' : 'none',
+    opacity: backgroundOpacitiy,
   };
 
   return (
@@ -45,14 +66,14 @@ export default ({
       <Wrapper style={style} onClick={onClickImage}>
         <Img src={image.url} alt={image.title} />
       </Wrapper>
-      { selected ? <PopupBackground onClick={onClickBack} /> : null }
+      <PopupBackground onClick={onClickBack} style={backgroundStyle} />
     </>
   );
 };
 
 const Wrapper = styled.div`
   position: absolute;
-  transition: all 1s ease;
+transition: all ${time}s ease;
 `;
 
 const Img = styled.img`
@@ -70,4 +91,5 @@ const PopupBackground = styled.div`
   left: 0;
   right: 0;
   z-index: 100;
+transition: opacity ${time}s ease;
 `;
