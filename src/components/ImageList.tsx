@@ -6,12 +6,15 @@ import Image from 'components/Image';
 import { IImage } from 'api/response';
 
 interface IProps {
-  images: IImage[]
+  images: IImage[];
 }
+
+const maxWidth = 187;
+const padding = 5;
 
 export default ({ images }: IProps) => {
   const [element, setElement] = React.useState<HTMLElement>();
-  const [clientWidth, setClientWidth] = React.useState<number>(100);
+  const [clientWidth, setClientWidth] = React.useState<number>(0);
 
   const onResize = React.useCallback(() => {
     if (element) {
@@ -19,30 +22,36 @@ export default ({ images }: IProps) => {
     }
   }, [element]);
   const firstUpdate = React.useRef(true);
+
   React.useEffect(() => {
     if (firstUpdate.current) {
       window.addEventListener('resize', onResize);
     }
-    if (element) {
-      setClientWidth(element.clientWidth);
-    }
+    onResize();
 
     return () => {
       window.removeEventListener('resize', onResize);
     };
   }, [element]);
 
+  const num = Math.ceil(clientWidth / maxWidth);
+
   return (
     <Wrapper ref={(el) => { if (el) setElement(el); }}>
       {images.map((item, index) => {
-        const height = item.height * clientWidth / item.width;
-        const top = images
-          .slice(0, index)
-          .map(i => i.height * clientWidth / i.width)
-          .reduce((a, b) => a + b, 0);
+        const length = (clientWidth - padding * (num - 1)) / num;
+        const top = Math.floor((index / num)) * (length + padding);
+        const left = (index % num) * (length + padding);
 
         return (
-          <Image key={item.id} top={top} width={clientWidth} height={height} image={item} />
+          <Image
+            key={item.id}
+            top={top}
+            left={left}
+            width={length}
+            height={length}
+            image={item}
+          />
         );
       })}
     </Wrapper>
