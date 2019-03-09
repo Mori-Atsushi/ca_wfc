@@ -8,6 +8,8 @@ import { IImage } from 'api/response';
 export default () => {
   const [images, setImages] = React.useState<IImage[]>([]);
 
+  const [query, setQuery] = React.useState('');
+
   React.useEffect(() => {
     (async () => {
       setImages(await getList());
@@ -15,6 +17,13 @@ export default () => {
   }, []);
 
   return (
-    <ImageList images={images} />
+    <>
+      <input onChange={e => setQuery(e.target.value)} value={query} />
+      <ImageList
+        images={images.filter(
+          item => `${item.title} ${item.description}`.indexOf(query) > -1
+        )}
+      />
+    </>
   );
 };
