@@ -6,11 +6,11 @@ module.exports = {
   mode: 'development',
   entry: path.resolve(__dirname, 'src/index.tsx'),
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'docs'),
     filename: 'bundle-[hash].js',
   },
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin(['docs']),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'template/index.html'),
     }),
