@@ -51,6 +51,10 @@ module.exports = {
         },
       },
       {
+        test: /\.css$/,
+        loaders: ['style-loader', 'css-loader?modules'],
+      },
+      {
         test: /\.mjs$/,
         include: /node_modules/,
         type: 'javascript/esm',
