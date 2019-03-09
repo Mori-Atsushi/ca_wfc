@@ -24,20 +24,23 @@ export default ({ images }: IProps) => {
   }, [element]);
 
   React.useEffect(() => {
-    window.addEventListener('resize', onResize);
     const onHashChange = () => {
       setSelectedId(window.location.hash.slice(1));
     };
     window.addEventListener('hashchange', onHashChange);
 
     return () => {
-      window.removeEventListener('resize', onResize);
       window.removeEventListener('hashchange', onHashChange);
     };
   }, []);
 
   React.useEffect(() => {
+    window.addEventListener('resize', onResize);
     onResize();
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
   }, [element]);
 
   const num = Math.ceil(clientWidth / maxWidth);
