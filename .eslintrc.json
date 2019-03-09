@@ -7,7 +7,9 @@
     "browser": true
   },
   "rules": {
-    "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }]
+    "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }],
+    "import/prefer-default-export": false,
+    "no-unused-vars": 0
   },
   "parserOptions": {
     "sourceType": "module",
