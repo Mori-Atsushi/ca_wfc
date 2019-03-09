@@ -11,6 +11,7 @@ interface IProps {
   left: number;
   width: number;
   height: number;
+  isSelected?: Boolean;
 }
 
 const time = 0.25;
@@ -21,6 +22,7 @@ export default ({
   width,
   height,
   left,
+  isSelected,
 }: IProps) => {
   const [selected, setSelected] = React.useState<Boolean>(false);
   const [backgroundOpacitiy, setBackgroundOpacitiy] = React.useState<number>(0);
@@ -33,6 +35,7 @@ export default ({
   });
   const onClickImage = React.useCallback(() => {
     if (selected) return;
+    window.location.hash = image.id;
     window.clearTimeout(timeoutId);
     setSelected(true);
     setBackgroundVisible(true);
@@ -44,6 +47,7 @@ export default ({
   }, [selected, timeoutId]);
   const onClickBack = React.useCallback(() => {
     if (!selected) return;
+    window.location.hash = '';
     setSelected(false);
     setBackgroundOpacitiy(0);
     noScroll.off();
@@ -92,6 +96,15 @@ export default ({
       window.removeEventListener('resize', onResize);
     };
   }, []);
+
+  React.useEffect(() => {
+    if (selected && !isSelected) {
+      onClickBack();
+    } else if (!selected && isSelected) {
+      onClickImage();
+    }
+    setSelected(isSelected || false);
+  }, [isSelected]);
 
   const style: React.CSSProperties = getStyle();
 

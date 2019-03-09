@@ -15,33 +15,39 @@ const padding = 5;
 export default ({ images }: IProps) => {
   const [element, setElement] = React.useState<HTMLElement>();
   const [clientWidth, setClientWidth] = React.useState<number>(0);
+  const [selectedId, setSelectedId] = React.useState<string>(window.location.hash.slice(1));
 
   const onResize = React.useCallback(() => {
     if (element) {
       setClientWidth(element.clientWidth);
     }
   }, [element]);
-  const firstUpdate = React.useRef(true);
 
   React.useEffect(() => {
-    if (firstUpdate.current) {
-      window.addEventListener('resize', onResize);
-    }
-    onResize();
+    window.addEventListener('resize', onResize);
+    const onHashChange = () => {
+      setSelectedId(window.location.hash.slice(1));
+    };
+    window.addEventListener('hashchange', onHashChange);
 
     return () => {
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('hashchange', onHashChange);
     };
+  }, []);
+
+  React.useEffect(() => {
+    onResize();
   }, [element]);
 
   const num = Math.ceil(clientWidth / maxWidth);
-
   return (
     <Wrapper ref={(el) => { if (el) setElement(el); }}>
       {images.map((item, index) => {
         const length = (clientWidth - padding * (num - 1)) / num;
         const top = Math.floor((index / num)) * (length + padding);
         const left = (index % num) * (length + padding);
+        const isSelected = selectedId === `${item.id}`;
 
         return (
           <Image
@@ -51,6 +57,7 @@ export default ({ images }: IProps) => {
             width={length}
             height={length}
             image={item}
+            isSelected={isSelected}
           />
         );
       })}
