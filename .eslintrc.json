@@ -9,7 +9,8 @@
   "rules": {
     "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }],
     "import/prefer-default-export": false,
-    "no-unused-vars": 0
+    "no-unused-vars": 0,
+    "import/no-unresolved": "off"
   },
   "parserOptions": {
     "sourceType": "module",

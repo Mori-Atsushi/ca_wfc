@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import * as noScroll from 'no-scroll';
+import ArrowBack from '@material-ui/icons/ArrowBack';
 
 import { IImage } from 'api/response';
 
@@ -104,7 +105,8 @@ export default ({
       <Wrapper style={style} onClick={onClickImage}>
         <Img src={image.url} alt={image.title} />
       </Wrapper>
-      <PopupBackground onClick={onClickBack} style={backgroundStyle} />
+      <PopupBackground style={backgroundStyle} />
+      <BackIcon onClick={onClickBack} style={backgroundStyle} />
     </>
   );
 };
@@ -130,5 +132,16 @@ const PopupBackground = styled.div`
   left: 0;
   right: 0;
   z-index: 100;
-transition: opacity ${time}s ease;
+  transition: opacity ${time}s ease;
+`;
+
+const BackIcon = styled(ArrowBack)`
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2000;
+  color: #ffffff;
+  font-size: 4rem;
+  cursor: pointer;
+  transition: opacity ${time}s ease;
 `;
