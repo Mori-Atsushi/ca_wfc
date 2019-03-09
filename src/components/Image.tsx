@@ -12,7 +12,7 @@ interface IProps {
   height: number;
 }
 
-const time = 0.4;
+const time = 0.25;
 
 export default ({
   image,
@@ -31,6 +31,8 @@ export default ({
     width: window.innerWidth,
   });
   const onClickImage = React.useCallback(() => {
+    if (selected) return;
+    window.clearTimeout(timeoutId);
     setSelected(true);
     setBackgroundVisible(true);
     setImageZIndex(1000);
@@ -38,17 +40,18 @@ export default ({
       setBackgroundOpacitiy(1);
       noScroll.on();
     });
-    window.clearTimeout(timeoutId);
-  }, []);
+  }, [selected, timeoutId]);
   const onClickBack = React.useCallback(() => {
+    if (!selected) return;
     setSelected(false);
     setBackgroundOpacitiy(0);
     noScroll.off();
-    setTimeoutId(window.setTimeout(() => {
+    const id = window.setTimeout(() => {
       setBackgroundVisible(false);
       setImageZIndex(0);
-    }, time * 1000));
-  }, []);
+    }, time * 1000);
+    setTimeoutId(id);
+  }, [selected]);
   const onResize = React.useCallback(() => {
     setWindowSize({
       height: window.innerHeight,
