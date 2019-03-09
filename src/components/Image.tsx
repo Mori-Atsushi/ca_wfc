@@ -26,6 +26,10 @@ export default ({
   const [backgroundVisible, setBackgroundVisible] = React.useState<boolean>(false);
   const [imageZIndex, setImageZIndex] = React.useState<number>(0);
   const [timeoutId, setTimeoutId] = React.useState<number>();
+  const [windowSize, setWindowSize] = React.useState({
+    height: window.innerHeight,
+    width: window.innerWidth,
+  });
   const onClickImage = React.useCallback(() => {
     setSelected(true);
     setBackgroundVisible(true);
@@ -45,21 +49,26 @@ export default ({
       setImageZIndex(0);
     }, time * 1000));
   }, []);
-
-  const style: React.CSSProperties = ((): React.CSSProperties => {
+  const onResize = React.useCallback(() => {
+    setWindowSize({
+      height: window.innerHeight,
+      width: window.innerWidth,
+    });
+  }, [window.innerHeight, window.innerWidth]);
+  const getStyle = React.useCallback(() => {
     if (selected) {
-      const isOblong = image.height / image.width < window.innerHeight / window.innerWidth;
+      const isOblong = image.height / image.width < windowSize.height / windowSize.width;
       const selectedHeight = isOblong
-        ? image.height * window.innerWidth / image.width
-        : window.innerHeight;
+        ? image.height * windowSize.width / image.width
+        : windowSize.height;
       const selectedWidth = isOblong
-        ? window.innerWidth
-        : image.width * window.innerHeight / image.height;
+        ? windowSize.width
+        : image.width * windowSize.height / image.height;
 
       return {
         zIndex: imageZIndex,
-        top: window.pageYOffset + (window.innerHeight - selectedHeight) / 2,
-        left: (window.innerWidth - selectedWidth) / 2,
+        top: window.pageYOffset + (windowSize.height - selectedHeight) / 2,
+        left: (windowSize.width - selectedWidth) / 2,
         width: selectedWidth,
         height: selectedHeight,
       };
@@ -71,7 +80,16 @@ export default ({
       width,
       height,
     };
-  })();
+  }, [selected, windowSize, top, left, width, height, imageZIndex]);
+  React.useEffect(() => {
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
+
+  const style: React.CSSProperties = getStyle();
 
   const backgroundStyle: React.CSSProperties = {
     display: backgroundVisible ? 'block' : 'none',
