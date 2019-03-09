@@ -33,6 +33,7 @@ export default ({
     height: window.innerHeight,
     width: window.innerWidth,
   });
+  const [pageYOffset, setPageYOffset] = React.useState(window.pageYOffset);
   const onClickImage = React.useCallback(() => {
     if (selected) return;
     window.location.hash = image.id;
@@ -40,9 +41,10 @@ export default ({
     setSelected(true);
     setBackgroundVisible(true);
     setImageZIndex(1000);
+    setPageYOffset(window.pageYOffset);
+    noScroll.on();
     window.requestAnimationFrame(() => {
       setBackgroundOpacitiy(1);
-      noScroll.on();
     });
   }, [selected, timeoutId]);
   const onClickBack = React.useCallback(() => {
@@ -75,7 +77,7 @@ export default ({
 
       return {
         zIndex: imageZIndex,
-        top: window.pageYOffset + (windowSize.height - selectedHeight) / 2,
+        top: pageYOffset + (windowSize.height - selectedHeight) / 2,
         left: (windowSize.width - selectedWidth) / 2,
         width: selectedWidth,
         height: selectedHeight,
