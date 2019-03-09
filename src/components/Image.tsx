@@ -45,19 +45,34 @@ export default ({
       setImageZIndex(0);
     }, time * 1000));
   }, []);
-  const style: React.CSSProperties = selected ? {
-    zIndex: imageZIndex,
-    top: window.pageYOffset + (window.innerHeight - height) / 2,
-    left: 0,
-    width: '100%',
-    height,
-  } : {
-    zIndex: imageZIndex,
-    top,
-    left,
-    width,
-    height,
-  };
+
+  const style: React.CSSProperties = ((): React.CSSProperties => {
+    if (selected) {
+      const isOblong = image.height / image.width < window.innerHeight / window.innerWidth;
+      const selectedHeight = isOblong
+        ? image.height * window.innerWidth / image.width
+        : window.innerHeight;
+      const selectedWidth = isOblong
+        ? window.innerWidth
+        : image.width * window.innerHeight / image.height;
+
+      return {
+        zIndex: imageZIndex,
+        top: window.pageYOffset + (window.innerHeight - selectedHeight) / 2,
+        left: (window.innerWidth - selectedWidth) / 2,
+        width: selectedWidth,
+        height: selectedHeight,
+      };
+    }
+    return {
+      zIndex: imageZIndex,
+      top,
+      left,
+      width,
+      height,
+    };
+  })();
+
   const backgroundStyle: React.CSSProperties = {
     display: backgroundVisible ? 'block' : 'none',
     opacity: backgroundOpacitiy,
