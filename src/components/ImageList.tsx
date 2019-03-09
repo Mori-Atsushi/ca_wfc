@@ -13,20 +13,23 @@ export default ({ images }: IProps) => {
   const [element, setElement] = React.useState<HTMLElement>();
   const [clientWidth, setClientWidth] = React.useState<number>(100);
 
+  const onResize = React.useCallback(() => {
+    if (element) {
+      setClientWidth(element.clientWidth);
+    }
+  }, [element]);
   const firstUpdate = React.useRef(true);
   React.useEffect(() => {
     if (firstUpdate.current) {
-      window.addEventListener('resize', () => {
-        if (element) {
-          setClientWidth(element.clientWidth);
-        }
-      });
+      window.addEventListener('resize', onResize);
     }
     if (element) {
       setClientWidth(element.clientWidth);
     }
 
-    // TODO: 登録したEventListainerの削除
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
   }, [element]);
 
   return (
@@ -51,10 +54,6 @@ export default ({ images }: IProps) => {
     </Wrapper>
   );
 };
-
-const handleResize = () => {
-
-}
 
 const Wrapper = styled.ul`
   position: relative;
