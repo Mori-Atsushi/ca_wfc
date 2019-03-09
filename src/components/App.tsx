@@ -1,22 +1,20 @@
 import * as React from 'react';
-import axios from 'axios';
+
+import { getList } from 'api';
+import { IImage } from 'api/response';
 
 export default () => {
-  const [images, setImages] = React.useState([]);
+  const [images, setImages] = React.useState<IImage[]>([]);
 
   React.useEffect(() => {
     (async () => {
-      const result: any = await axios(
-        'https://wfc-2019.firebaseapp.com/images',
-      );
-
-      setImages(result.data.data.images);
+      setImages(await getList());
     })();
   }, []);
 
   return (
     <ul>
-      {images.map((item: any) => (
+      {images.map(item => (
         <>{item.title}</>
       ))}
     </ul>
