@@ -7,12 +7,14 @@ import { IImage } from 'api/response';
 
 interface IProps {
   images: IImage[];
+  marginTop: number;
+  maxWidth: number;
 }
 
-const maxWidth = 187;
+const maxLength = 187;
 const padding = 5;
 
-export default ({ images }: IProps) => {
+export default ({ images, marginTop, maxWidth }: IProps) => {
   const [element, setElement] = React.useState<HTMLElement>();
   const [clientWidth, setClientWidth] = React.useState<number>(0);
   const [selectedId, setSelectedId] = React.useState<string>(window.location.hash.slice(1));
@@ -43,14 +45,14 @@ export default ({ images }: IProps) => {
     };
   }, [element]);
 
-  const num = Math.ceil(clientWidth / maxWidth);
-  const length = (clientWidth - padding * (num - 1)) / num;
+  const num = Math.ceil(Math.min(clientWidth, maxWidth) / maxLength);
+  const length = (Math.min(clientWidth, maxWidth) - padding * (num - 1)) / num;
   const height = Math.floor((images.length / num)) * (length + padding) + length;
   return (
     <Wrapper ref={(el) => { if (el) setElement(el); }} style={{ height }}>
       {images.map((item, index) => {
-        const top = Math.floor((index / num)) * (length + padding);
-        const left = (index % num) * (length + padding);
+        const top = Math.floor((index / num)) * (length + padding) + marginTop;
+        const left = (index % num) * (length + padding) + Math.max((clientWidth - maxWidth) / 2, 0);
         const isSelected = selectedId === `${item.id}`;
 
         return (
