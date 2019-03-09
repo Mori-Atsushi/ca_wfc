@@ -35,20 +35,14 @@ export default ({ images }: IProps) => {
   return (
     <Wrapper ref={(el) => { if (el) setElement(el); }}>
       {images.map((item, index) => {
+        const height = item.height * clientWidth / item.width;
         const top = images
           .slice(0, index)
           .map(i => i.height * clientWidth / i.width)
           .reduce((a, b) => a + b, 0);
 
-        const style: React.CSSProperties = {
-          top,
-          left: 0,
-        };
-
         return (
-          <Item style={style} key={item.id}>
-            <Image {...item} />
-          </Item>
+          <Image key={item.id} top={top} width={clientWidth} height={height} image={item} />
         );
       })}
     </Wrapper>
@@ -57,9 +51,4 @@ export default ({ images }: IProps) => {
 
 const Wrapper = styled.ul`
   position: relative;
-`;
-
-const Item = styled.li`
-  position: absolute;
-  width: 100%;
 `;
