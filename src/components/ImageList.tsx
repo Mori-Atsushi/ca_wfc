@@ -44,10 +44,11 @@ export default ({ images }: IProps) => {
   }, [element]);
 
   const num = Math.ceil(clientWidth / maxWidth);
+  const length = (clientWidth - padding * (num - 1)) / num;
+  const height = Math.floor((images.length / num)) * (length + padding) + length;
   return (
-    <Wrapper ref={(el) => { if (el) setElement(el); }}>
+    <Wrapper ref={(el) => { if (el) setElement(el); }} style={{ height }}>
       {images.map((item, index) => {
-        const length = (clientWidth - padding * (num - 1)) / num;
         const top = Math.floor((index / num)) * (length + padding);
         const left = (index % num) * (length + padding);
         const isSelected = selectedId === `${item.id}`;

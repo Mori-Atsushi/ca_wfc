@@ -59,12 +59,6 @@ export default ({
     }, time * 1000);
     setTimeoutId(id);
   }, [selected]);
-  const onResize = React.useCallback(() => {
-    setWindowSize({
-      height: window.innerHeight,
-      width: window.innerWidth,
-    });
-  }, [window.innerHeight, window.innerWidth]);
   const getStyle = React.useCallback(() => {
     if (selected) {
       const isOblong = image.height / image.width < windowSize.height / windowSize.width;
@@ -92,10 +86,23 @@ export default ({
     };
   }, [selected, windowSize, top, left, width, height, imageZIndex]);
   React.useEffect(() => {
+    const onResize = () => {
+      setWindowSize({
+        height: window.innerHeight,
+        width: window.innerWidth,
+      });
+    };
+    const onScroll = () => {
+      if (document.documentElement.style.overflow !== 'hidden') {
+        setPageYOffset(window.pageYOffset);
+      }
+    };
     window.addEventListener('resize', onResize);
+    window.addEventListener('scroll', onScroll);
 
     return () => {
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', onScroll);
     };
   }, []);
 
@@ -107,6 +114,14 @@ export default ({
     }
     setSelected(isSelected || false);
   }, [isSelected]);
+
+  const offset = windowSize.height / 2;
+  if (!selected && (
+    top + height < pageYOffset - offset
+    || top > pageYOffset + windowSize.height + offset
+  )) {
+    return <></>;
+  }
 
   const style: React.CSSProperties = getStyle();
 
@@ -128,7 +143,7 @@ export default ({
 
 const Wrapper = styled.div`
   position: absolute;
-transition: all ${time}s ease;
+  transition: all ${time}s ease;
 `;
 
 const Img = styled.img`
