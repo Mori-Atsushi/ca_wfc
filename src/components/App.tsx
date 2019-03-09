@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Image from 'components/Image';
+import ImageList from 'components/ImageList';
 
 import { getList } from 'api';
 import { IImage } from 'api/response';
@@ -15,12 +15,6 @@ export default () => {
   }, []);
 
   return (
-    <ul>
-      {images.map(item => (
-        <ul key={item.id}>
-          <Image {...item} />
-        </ul>
-      ))}
-    </ul>
+    <ImageList images={images} />
   );
 };
