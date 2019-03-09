@@ -12,7 +12,7 @@ interface IProps {
   height: number;
 }
 
-const time = 0.4;
+const time = 0.25;
 
 export default ({
   image,
