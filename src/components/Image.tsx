@@ -5,10 +5,11 @@ import * as noScroll from 'no-scroll';
 import { IImage } from 'api/response';
 
 interface IProps {
-  image: IImage,
-  top: number,
-  width: number,
-  height: number,
+  image: IImage;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
 }
 
 const time = 0.4;
@@ -18,6 +19,7 @@ export default ({
   top,
   width,
   height,
+  left,
 }: IProps) => {
   const [selected, setSelected] = React.useState<Boolean>(false);
   const [backgroundOpacitiy, setBackgroundOpacitiy] = React.useState<number>(0);
@@ -47,12 +49,12 @@ export default ({
     zIndex: imageZIndex,
     top: window.pageYOffset + (window.innerHeight - height) / 2,
     left: 0,
-    width,
+    width: '100%',
     height,
   } : {
     zIndex: imageZIndex,
     top,
-    left: 0,
+    left,
     width,
     height,
   };
@@ -77,12 +79,13 @@ transition: all ${time}s ease;
 `;
 
 const Img = styled.img`
+  object-fit: cover;
   width: 100%;
   height: 100%;
 `;
 
 const PopupBackground = styled.div`
-  background-color: #333333;
+  background-color: #000000;
   position: fixed;
   width: 100vw;
   height: 100vh;
