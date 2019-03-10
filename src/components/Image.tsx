@@ -164,6 +164,7 @@ export default ({
 const Wrapper = styled.div`
   position: absolute;
   transition: all ${time}s ease;
+  cursor: pointer;
 `;
 
 const Img = styled.img`
