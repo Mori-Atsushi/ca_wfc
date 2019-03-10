@@ -36,6 +36,7 @@ export default () => {
 
 const Wrapper = styled.div`
   position: relative;
+  font-family: "Hiragino Kaku Gothic ProN","メイリオ", sans-serif;
 `;
 
 const SearchWrapper = styled.div`
