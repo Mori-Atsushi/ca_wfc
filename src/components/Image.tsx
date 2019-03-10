@@ -65,7 +65,7 @@ export default ({
     }, time * 1000);
     setTimeoutId(id);
   }, [selected]);
-  const getStyle = React.useCallback(() => {
+  const getStyle = React.useCallback((): React.CSSProperties => {
     if (selected) {
       const isOblong = image.height / image.width < windowSize.height / windowSize.width;
       const selectedHeight = isOblong
@@ -83,6 +83,7 @@ export default ({
         height: selectedHeight,
         transform: 'translateY(0)',
         opacity: 1,
+        cursor: 'auto',
       };
     }
     return {
@@ -93,6 +94,7 @@ export default ({
       height,
       transform: `translateY(${translateY}px)`,
       opacity,
+      cursor: 'pointer',
     };
   }, [selected, windowSize, top, left, width, height, imageZIndex, translateY, opacity]);
   React.useEffect(() => {
@@ -140,7 +142,7 @@ export default ({
 const Wrapper = styled.div`
   position: absolute;
   transition: all ${time}s ease;
-  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 `;
 
 const Img = styled.img`
