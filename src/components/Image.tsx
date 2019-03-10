@@ -15,6 +15,9 @@ interface IProps {
   height: number;
   isSelected?: Boolean;
   delay: number;
+  windowSize: { width: number, height: number }
+  pageYOffset: number;
+  isInDisplay: boolean;
 }
 
 const time = 0.25;
@@ -27,24 +30,17 @@ export default ({
   left,
   isSelected,
   delay,
+  windowSize,
+  pageYOffset,
+  isInDisplay,
 }: IProps) => {
   const [selected, setSelected] = React.useState<Boolean>(false);
   const [backgroundOpacitiy, setBackgroundOpacitiy] = React.useState<number>(0);
   const [backgroundVisible, setBackgroundVisible] = React.useState<boolean>(false);
   const [imageZIndex, setImageZIndex] = React.useState<number>(0);
   const [timeoutId, setTimeoutId] = React.useState<number>();
-  const [windowSize, setWindowSize] = React.useState({
-    height: window.innerHeight,
-    width: window.innerWidth,
-  });
-  const [pageYOffset, setPageYOffset] = React.useState(window.pageYOffset);
   const [opacity, setOpacity] = React.useState<number>(selected ? 1 : 0);
   const [translateY, setTranslateY] = React.useState<number>(selected ? 0 : 100);
-  const isInDisplay = React.useCallback(() => {
-    const offset = windowSize.height / 2;
-    return (top + height > pageYOffset - offset
-      && top < pageYOffset + windowSize.height + offset);
-  }, [top, height, pageYOffset, windowSize]);
   const onClickImage = React.useCallback(() => {
     if (selected) return;
     window.location.hash = image.id;
@@ -52,7 +48,6 @@ export default ({
     setSelected(true);
     setBackgroundVisible(true);
     setImageZIndex(1000);
-    setPageYOffset(window.pageYOffset);
     noScroll.on();
     window.requestAnimationFrame(() => {
       setBackgroundOpacitiy(1);
@@ -101,21 +96,7 @@ export default ({
     };
   }, [selected, windowSize, top, left, width, height, imageZIndex, translateY, opacity]);
   React.useEffect(() => {
-    const onResize = () => {
-      setWindowSize({
-        height: window.innerHeight,
-        width: window.innerWidth,
-      });
-    };
-    const onScroll = () => {
-      if (document.documentElement.style.overflow !== 'hidden') {
-        setPageYOffset(window.pageYOffset);
-      }
-    };
-    window.addEventListener('resize', onResize);
-    window.addEventListener('scroll', onScroll);
-
-    if (!selected && isInDisplay()) {
+    if (!selected && isInDisplay) {
       window.setTimeout(() => {
         setTranslateY(0);
         setOpacity(1);
@@ -124,11 +105,6 @@ export default ({
       setTranslateY(0);
       setOpacity(1);
     }
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('scroll', onScroll);
-    };
   }, []);
 
   React.useEffect(() => {
@@ -139,10 +115,6 @@ export default ({
     }
     setSelected(isSelected || false);
   }, [isSelected]);
-
-  if (!selected && !isInDisplay()) {
-    return <></>;
-  }
 
   const style: React.CSSProperties = getStyle();
 
