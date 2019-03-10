@@ -40,6 +40,11 @@ export default ({
   const [pageYOffset, setPageYOffset] = React.useState(window.pageYOffset);
   const [opacity, setOpacity] = React.useState<number>(selected ? 1 : 0);
   const [translateY, setTranslateY] = React.useState<number>(selected ? 0 : 100);
+  const isInDisplay = React.useCallback(() => {
+    const offset = windowSize.height / 2;
+    return (top + height > pageYOffset - offset
+      && top < pageYOffset + windowSize.height + offset);
+  }, [top, height, pageYOffset, windowSize]);
   const onClickImage = React.useCallback(() => {
     if (selected) return;
     window.location.hash = image.id;
@@ -110,11 +115,14 @@ export default ({
     window.addEventListener('resize', onResize);
     window.addEventListener('scroll', onScroll);
 
-    if (!selected) {
+    if (!selected && isInDisplay()) {
       window.setTimeout(() => {
         setTranslateY(0);
         setOpacity(1);
       }, delay * 1000);
+    } else {
+      setTranslateY(0);
+      setOpacity(1);
     }
 
     return () => {
@@ -132,11 +140,7 @@ export default ({
     setSelected(isSelected || false);
   }, [isSelected]);
 
-  const offset = windowSize.height / 2;
-  if (!selected && (
-    top + height < pageYOffset - offset
-    || top > pageYOffset + windowSize.height + offset
-  )) {
+  if (!selected && !isInDisplay()) {
     return <></>;
   }
 
