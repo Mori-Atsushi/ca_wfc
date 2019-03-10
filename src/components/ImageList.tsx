@@ -47,7 +47,7 @@ export default ({ images, marginTop, maxWidth }: IProps) => {
 
   const num = Math.ceil(Math.min(clientWidth, maxWidth) / maxLength);
   const length = (Math.min(clientWidth, maxWidth) - padding * (num - 1)) / num;
-  const height = Math.floor((images.length / num)) * (length + padding) + length;
+  const height = num === 0 ? 0 : Math.floor((images.length / num)) * (length + padding) + length;
   return (
     <Wrapper ref={(el) => { if (el) setElement(el); }} style={{ height }}>
       {images.map((item, index) => {
