@@ -14,6 +14,7 @@ interface IProps {
   width: number;
   height: number;
   isSelected?: Boolean;
+  delay: number;
 }
 
 const time = 0.25;
@@ -25,6 +26,7 @@ export default ({
   height,
   left,
   isSelected,
+  delay,
 }: IProps) => {
   const [selected, setSelected] = React.useState<Boolean>(false);
   const [backgroundOpacitiy, setBackgroundOpacitiy] = React.useState<number>(0);
@@ -36,6 +38,8 @@ export default ({
     width: window.innerWidth,
   });
   const [pageYOffset, setPageYOffset] = React.useState(window.pageYOffset);
+  const [opacity, setOpacity] = React.useState<number>(selected ? 1 : 0);
+  const [translateY, setTranslateY] = React.useState<number>(selected ? 0 : 100);
   const onClickImage = React.useCallback(() => {
     if (selected) return;
     window.location.hash = image.id;
@@ -77,6 +81,8 @@ export default ({
         left: (windowSize.width - selectedWidth) / 2,
         width: selectedWidth,
         height: selectedHeight,
+        transform: 'translateY(0)',
+        opacity: 1,
       };
     }
     return {
@@ -85,8 +91,10 @@ export default ({
       left,
       width,
       height,
+      transform: `translateY(${translateY}px)`,
+      opacity,
     };
-  }, [selected, windowSize, top, left, width, height, imageZIndex]);
+  }, [selected, windowSize, top, left, width, height, imageZIndex, translateY, opacity]);
   React.useEffect(() => {
     const onResize = () => {
       setWindowSize({
@@ -101,6 +109,13 @@ export default ({
     };
     window.addEventListener('resize', onResize);
     window.addEventListener('scroll', onScroll);
+
+    if (!selected) {
+      window.setTimeout(() => {
+        setTranslateY(0);
+        setOpacity(1);
+      }, delay * 1000);
+    }
 
     return () => {
       window.removeEventListener('resize', onResize);

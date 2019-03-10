@@ -64,6 +64,7 @@ export default ({ images, marginTop, maxWidth }: IProps) => {
             height={length}
             image={item}
             isSelected={isSelected}
+            delay={index * 0.01}
           />
         );
       })}
