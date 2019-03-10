@@ -17,6 +17,7 @@ interface IProps {
   delay: number;
   windowSize: { width: number, height: number }
   pageYOffset: number;
+  isInDisplay: boolean;
 }
 
 const time = 0.25;
@@ -31,6 +32,7 @@ export default ({
   delay,
   windowSize,
   pageYOffset,
+  isInDisplay,
 }: IProps) => {
   const [selected, setSelected] = React.useState<Boolean>(false);
   const [backgroundOpacitiy, setBackgroundOpacitiy] = React.useState<number>(0);
@@ -39,11 +41,6 @@ export default ({
   const [timeoutId, setTimeoutId] = React.useState<number>();
   const [opacity, setOpacity] = React.useState<number>(selected ? 1 : 0);
   const [translateY, setTranslateY] = React.useState<number>(selected ? 0 : 100);
-  const isInDisplay = React.useCallback(() => {
-    const offset = windowSize.height / 2;
-    return (top + height > pageYOffset - offset
-      && top < pageYOffset + windowSize.height + offset);
-  }, [top, height, pageYOffset, windowSize]);
   const onClickImage = React.useCallback(() => {
     if (selected) return;
     window.location.hash = image.id;
@@ -99,7 +96,7 @@ export default ({
     };
   }, [selected, windowSize, top, left, width, height, imageZIndex, translateY, opacity]);
   React.useEffect(() => {
-    if (!selected && isInDisplay()) {
+    if (!selected && isInDisplay) {
       window.setTimeout(() => {
         setTranslateY(0);
         setOpacity(1);
@@ -118,10 +115,6 @@ export default ({
     }
     setSelected(isSelected || false);
   }, [isSelected]);
-
-  if (!selected && !isInDisplay()) {
-    return <></>;
-  }
 
   const style: React.CSSProperties = getStyle();
 

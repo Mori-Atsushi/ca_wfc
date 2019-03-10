@@ -81,6 +81,7 @@ export default ({ images, marginTop, maxWidth }: IProps) => {
             delay={isFirstRender ? index * 0.02 : 0}
             windowSize={windowSize}
             pageYOffset={pageYOffset}
+            isInDisplay={isInDisplay}
           />
         );
       })}
