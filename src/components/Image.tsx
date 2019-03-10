@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import * as noScroll from 'no-scroll';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 
+import Detail from 'components/Detail';
+
 import { IImage } from 'api/response';
 
 interface IProps {
@@ -137,6 +139,9 @@ export default ({
       </Wrapper>
       <PopupBackground style={backgroundStyle} />
       <BackIcon onClick={onClickBack} style={backgroundStyle} />
+      <DetailWrapper style={backgroundStyle}>
+        <Detail image={image} />
+      </DetailWrapper>
     </>
   );
 };
@@ -174,4 +179,12 @@ const BackIcon = styled(ArrowBack)`
   font-size: 4rem;
   cursor: pointer;
   transition: opacity ${time}s ease;
+`;
+
+const DetailWrapper = styled.div`
+  position: fixed;
+  z-index: 3000;
+  left: 0;
+  right: 0;
+  bottom: 0;
 `;
